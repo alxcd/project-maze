@@ -3,8 +3,11 @@ package fi.karelia.edu.maze;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -17,9 +20,13 @@ public class MazeGame extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
         BorderPane root = new BorderPane();
 
-        LevelMap maze = new LevelMap(15);
+        VBox vBoxLeft = new VBox(new Button("New game"));
+        root.setLeft(vBoxLeft);
+
+        LevelMap maze = new LevelMap(10);
 
         GridPane grid = new GridPane();
         root.setCenter(grid);
