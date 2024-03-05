@@ -41,6 +41,7 @@ public class LevelMap {
         int range = this.size - 1;
         int randX = (int)(Math.random() * range - 1) * 2 + 1;
         int randY = (int)(Math.random() * range - 1) * 2 + 1;
+        System.out.println(randY + " " + randX);
         carvePassageInMaze(randX,randY);
     }
 
@@ -62,8 +63,10 @@ public class LevelMap {
     private void carvePassageInMaze(int cx, int cy) {
         int nx = cx; // cx, cy - current coordinates;
         int ny = cy; // nx, ny = new coordinates for recursion call
-        shuffle(directions); // shuffle in what direction try going first
-        for (char direction : directions) { // 2nd step. Checking where we can go
+        mazeMatrix[cy][cx] = 1;
+        ArrayList<Character> tempDirections = new ArrayList<>(directions); // shuffle in what direction try going first
+        shuffle(tempDirections);
+        for (char direction : tempDirections) { // 2nd step. Checking where we can go
             if (direction == 'N') {
                 if (cy - 2 >= 0 && mazeMatrix[cy - 2][cx] == 0) {
                     mazeMatrix[cy - 1][cx] = 4;
