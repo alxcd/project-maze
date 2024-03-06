@@ -3,9 +3,11 @@ package fi.karelia.edu.maze;
 /* TODO:
     - player class with position
     - add scale for size of rectangle in gridPane
-    - check position with gridpane
+    - *check position with gridpane
     - think about using AnchorPane to resize GridPane
     - game idea with changing colors
+    - *make multi keys pressed events
+    - *make an exit and next level
 */
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -69,7 +71,7 @@ public class MazeGame extends Application {
         root.setBottom(vBoxBottom);
 
 
-        int size = 15;
+        int size = 5;
         maze = new LevelMap(size);
         mazeSize = maze.getMazeMatrix().length;
 
@@ -115,7 +117,7 @@ public class MazeGame extends Application {
         scene.setOnKeyPressed(new playerMoveHandler());
 
 
-        SceneSizeChangeListener.letterbox(scene, stackPane);
+        //SceneSizeChangeListener.letterbox(scene, stackPane);
     }
     class playerMoveHandler implements EventHandler<KeyEvent> {
         long step = 200 / mazeSize;
