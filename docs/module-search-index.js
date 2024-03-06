@@ -1,0 +1,1 @@
+moduleSearchIndex = [{"l":"fi.karelia.edu.maze"}];updateSearchResults();
