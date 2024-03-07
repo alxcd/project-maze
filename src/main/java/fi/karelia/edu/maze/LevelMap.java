@@ -27,7 +27,9 @@ public class LevelMap {
      * 1 - visited cell
      * 2 - wall
      * 4 - no wall
+     * 5 - exit
      * In this constructor mazeMatrix is populated with walls and unvisited cells everywhere.
+     *
      * @param size the size
      */
     public LevelMap(int size) {
@@ -43,6 +45,12 @@ public class LevelMap {
         int randY = (int)(Math.random() * range - 1) * 2 + 1;
         System.out.println(randY + " " + randX);
         carvePassageInMaze(randX,randY);
+
+        //making an exit
+        int iExit, jExit;
+        iExit = Math.random() > 0.5 ? 0 : mazeMatrix.length - 1;
+        jExit = Math.random() > 0.5 ? 1 : mazeMatrix.length - 2;
+        mazeMatrix[iExit][jExit] = 5;
     }
 
     /**
