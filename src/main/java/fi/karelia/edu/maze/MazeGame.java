@@ -1,22 +1,20 @@
 package fi.karelia.edu.maze;
 
 /* TODO:
-    - player class with position
+    - player class with
     - *check position with gridpane
     - think about using AnchorPane to resize GridPane
     - game idea with changing colors
     - *make an exit and next level
     - rewrite Application class for level restart
 */
+
 import javafx.animation.AnimationTimer;
-import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -25,7 +23,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
-import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The type Maze game.
@@ -36,6 +34,7 @@ public class MazeGame extends Application {
     private Circle playerCircle;
     private Label playerXY;
     private Label playerGrid;
+    private Label gameTimer;
     private LevelMap maze;
     private HashMap<String, Integer> keyPressedDirection = new HashMap<>();
     /**
@@ -65,26 +64,31 @@ public class MazeGame extends Application {
         StackPane stackPane = new StackPane();
         pane.getChildren().add(stackPane);
 
+
 //        stackPane.prefHeightProperty().bind(root.heightProperty());
 //        stackPane.prefWidthProperty().bind(root.widthProperty());
 
 
         root.setCenter(pane);
-
         VBox vBoxBottom = new VBox();
         vBoxBottom.setPadding(new Insets(15));
 
-        root.setBottom(vBoxBottom);
+        VBox vBoxLeft = new VBox();
+        vBoxLeft.setPadding(new Insets(15));
+        gameTimer = new Label("60");
+        vBoxLeft.getChildren().add(gameTimer);
+        HBox hBoxBottom = new HBox();
+        root.setBottom(hBoxBottom);
+        hBoxBottom.getChildren().addAll(vBoxBottom, vBoxLeft);
 
-
-        int size = 5;
+        int size = 10;
         maze = new LevelMap(size);
         mazeSize = maze.getMazeMatrix().length;
 
         GridPane grid0 = new GridPane();
         grid0.setGridLinesVisible(false);
         GridPane grid1 = new GridPane();
-        squareSide = 800 / mazeSize;
+        squareSide = 400 / size;
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < mazeSize; i++) {
             for (int j = 0; j < mazeSize; j++) {
@@ -98,11 +102,12 @@ public class MazeGame extends Application {
         Text textBottom = new Text("maze created in: " + (endTime - startTime));
         playerXY = new Label();
         playerGrid = new Label();
+
         vBoxBottom.getChildren().addAll(textBottom, playerXY, playerGrid);
 
 
-        int circleRadius = 200 / mazeSize;
-        int centerGrid = mazeSize / 2;
+        int circleRadius = 100 / size;
+        int centerGrid = (size % 2 != 0) ? (mazeSize / 2) : (mazeSize / 2 + 1);
         playerCircle = new Circle(circleRadius, Color.GREENYELLOW);
         StackPane.setAlignment(playerCircle, Pos.TOP_LEFT);
         playerCircle.setCenterX(squareSide * centerGrid + playerCircle.getRadius() + squareSide / 4.0);
@@ -160,6 +165,9 @@ public class MazeGame extends Application {
 
 
     class Moving extends AnimationTimer {
+        private long lastFrameTime;
+        private long delta;
+        private long countdownTimer = TimeUnit.NANOSECONDS.convert(60, TimeUnit.SECONDS);
         @Override
         public void handle(long now) {
             if ((keyPressedDirection.get("UP") != 0 || keyPressedDirection.get("LEFT") != 0)) {
@@ -169,19 +177,29 @@ public class MazeGame extends Application {
                 if (isPlayerMovableX())
                     playerCircle.setCenterX(playerCircle.getCenterX() + speed * keyPressedDirection.get("LEFT"));
             }
+
+            delta = now - lastFrameTime;
+            if (lastFrameTime != 0) countdownTimer -= delta;
+            lastFrameTime = now;
+            displayInfo();
         }
 
         private boolean isPlayerMovableY() {
             int i = (int) ((playerCircle.getCenterY() + (playerCircle.getRadius() + 1) * keyPressedDirection.get("UP")) / squareSide);
             int j = (int) ((playerCircle.getCenterX() + (playerCircle.getRadius())) / squareSide);
-            if (maze.getMazeMatrix()[i][j] == 2) return false;
-            return true;
+            return maze.getMazeMatrix()[i][j] != 2;
         }
         private boolean isPlayerMovableX() {
             int i = (int) ((playerCircle.getCenterY() + (playerCircle.getRadius())) / squareSide);
             int j = (int) ((playerCircle.getCenterX() + (playerCircle.getRadius() + 1) * keyPressedDirection.get("LEFT")) / squareSide);
-            if (maze.getMazeMatrix()[i][j] == 2) return false;
-            return true;
+            return maze.getMazeMatrix()[i][j] != 2;
+        }
+        private void displayInfo() {
+            playerXY.setText("X: " + playerCircle.getCenterX() + " Y: " + playerCircle.getCenterY());
+            playerGrid.setText("Grid: " + (int) (playerCircle.getCenterY() / squareSide)
+                    + ", " + (int) (playerCircle.getCenterX() / squareSide));
+
+            gameTimer.setText("" + TimeUnit.SECONDS.convert(countdownTimer, TimeUnit.NANOSECONDS));
         }
     }
     /**
