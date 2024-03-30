@@ -64,7 +64,6 @@ public class MazeGame extends Application {
         size = 3;
         pStage = primaryStage;
         startGame(pStage);
-        //SceneSizeChangeListener.letterbox(scene, stackPane);
     }
 
     void nextLevel(Stage stage, double elapsedSeconds) {
