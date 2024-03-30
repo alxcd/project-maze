@@ -43,7 +43,6 @@ public class LevelMap {
         int range = this.size - 1;
         int randX = (int)(Math.random() * range - 1) * 2 + 1;
         int randY = (int)(Math.random() * range - 1) * 2 + 1;
-        System.out.println(randY + " " + randX);
         carvePassageInMaze(randX,randY);
 
         //making an exit
