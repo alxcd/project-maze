@@ -6,29 +6,32 @@ import java.util.Arrays;
 import static java.util.Collections.shuffle;
 
 /**
- * The type Level map.
+ * The type LevelMap.
  */
 public class LevelMap {
     /**
-     * The Size.
+     * The size of the maze.
      */
     final private int size;
     /**
-     * The Maze matrix.
+     * The maze matrix.
      */
     private final int[][] mazeMatrix;
+    /**
+     * Directions for carving the passage.
+     */
     private final ArrayList<Character> directions = new ArrayList<>(Arrays.asList('N', 'S', 'W', 'E'));
 
     /**
-     * Instantiates a new Level map.
-     * Creates a specific sized mazeMatrix.
-     * Each matrix cell corresponds either to a wall or a maze position/cell
-     * 0 - unvisited cell (at first all of them are)
-     * 1 - visited cell
-     * 2 - wall
-     * 4 - no wall
-     * 5 - exit
-     * In this constructor mazeMatrix is populated with walls and unvisited cells everywhere.
+     * Instantiates a new LevelMap.
+     * Creates a specific sized maze matrix.
+     * Each matrix cell corresponds either to a wall or a maze position/cell<p>
+     * 0 - unvisited cell (at first all of them are)<p>
+     * 1 - visited cell<p>
+     * 2 - wall<p>
+     * 4 - no wall<p>
+     * 5 - exit<p>
+     * In this constructor maze matrix is populated with walls and unvisited cells everywhere.
      *
      * @param size the size
      */
@@ -55,17 +58,17 @@ public class LevelMap {
     /**
      * Carve passage in maze using recursive backtracking method with 2 int attributes as
      * starting position for carving. Both should be odd - method doesn't check if they are.
-     * Algorithm goes like this:
-     * 1. Choose starting position(we do this beforehand)
+     * Algorithm goes like this:<p>
+     * 1. Choose starting position(we do this beforehand)<p>
      * 2. Randomly determine where to go(North/Up, South/Down, West/Left, East/Right)
-     *    It shouldn't be another wall or visited cell. So we always carve new cells.
-     * 3. If we have nowhere to go, then we go back one cell.
-     * 4. Once we have nowhere to go, and we're back to the starting position, the maze is done.
-     * Recursion part starts at 2nd step by calling 1st step again, but with new position of a cell we carved.
+     * It shouldn't be another wall or visited cell. So we always carve new cells.<p>
+     * 3. If we have nowhere to go, then we go back one cell.<p>
+     * 4. Once we have nowhere to go, and we're back to the starting position, the maze is done.<p>
+     * Recursion part starts at 2nd step by calling 1st step again, but with new position of a cell we carved.<p>
+     * For algorithm's description @see <a href="https://weblog.jamisbuck.org/2010/12/27/maze-generation-recursive-backtracking"></a>
      *
-     * @param cx the cx
-     * @param cy the cy
-     *
+     * @param cx current X coordinate in a maze
+     * @param cy current Y coordinate in a maze
      */
     private void carvePassageInMaze(int cx, int cy) {
         int nx = cx; // cx, cy - current coordinates;
@@ -113,16 +116,16 @@ public class LevelMap {
     /**
      * Gets size.
      *
-     * @return the size
+     * @return the size of maze
      */
     public int getSize() {
         return size;
     }
 
     /**
-     * Get maze matrix int [ ] [ ].
+     * Get the maze array.
      *
-     * @return the int [ ] [ ]
+     * @return the int[][]
      */
     public int[][] getMazeMatrix() {
         return mazeMatrix;

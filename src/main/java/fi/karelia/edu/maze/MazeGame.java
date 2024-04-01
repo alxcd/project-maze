@@ -1,7 +1,10 @@
 package fi.karelia.edu.maze;
 
 /* TODO:
-    - make gameover condition
+    - make GameOver condition
+    - correct bug with player moving out of bounds
+    - speed is still an issue
+    - make game fun
 */
 
 import external.GameLoopTimer;
@@ -21,32 +24,76 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * The type Maze game.
+ * The Maze Game.
  */
-public class MazeGame extends Application {
-    private int mazeSize;
+public abstract class MazeGame extends Application {
+    /**
+     * The size of maze.
+     */
     private int size;
+    /**
+     * The size of square side for the cell in the maze.
+     */
     private int squareSide;
+    /**
+     * The Circle for drawing player.
+     */
     private Circle circlePlayer;
+    /**
+     * The label for printing player's coordinates.
+     */
     private Label lbPlayerXY;
+    /**
+     * The label for printing player's position on a grid.
+     */
     private Label lbPlayerGrid;
+    /**
+     * The label for printing game's timer.
+     */
     private Label lbGameTimer;
+    /**
+     * The Maze.
+     */
     private LevelMap maze;
+    /**
+     * The Key pressed direction.
+     */
     private final HashMap<String, Integer> keyPressedDirection = new HashMap<>();
+    /**
+     * The frame rate label.
+     */
     private Label lbFrameRateLabel;
+    /**
+     * The copy of primaryStage.
+     */
     private Stage pStage;
+    /**
+     * The Decimal format.
+     */
     private final DecimalFormat decimalFormat = new DecimalFormat("0.00");
+    /**
+     * The Player.
+     */
     private Player player;
+    /**
+     * The Current score.
+     */
     private double currentScore;
+    /**
+     * The ArrayList of Player.
+     */
     private ArrayList<Player> playerList;
+    /**
+     * The file path to CSV-file of players and their scores.
+     */
     private final String filePath = "src/main/resources/fi/karelia/edu/maze/players.csv";
+
     /**
      * The entry point of application.
      *
@@ -57,7 +104,11 @@ public class MazeGame extends Application {
     }
 
     /**
+     * Start of the program.
+     * Copies primaryStage to pStage and calls startGame method
+     *
      * @param primaryStage the primary stage
+     * @see #startGame(Stage) #startGame(Stage)
      */
     @Override
     public void start(Stage primaryStage) {
@@ -66,18 +117,33 @@ public class MazeGame extends Application {
         startGame(pStage);
     }
 
+    /**
+     * Called when player advances to the next level.
+     *
+     * @param stage          the stage
+     * @param elapsedSeconds the elapsed seconds
+     */
     void nextLevel(Stage stage, double elapsedSeconds) {
         currentScore += (60 - elapsedSeconds) * (size - 2);
         size += 1;
         startGame(stage);
     }
 
+    /**
+     * Called by pressing "New game" button.
+     *
+     * @param stage the stage
+     */
     void newGame(Stage stage) {
         size = 3;
         startGame(stage);
         currentScore = 0;
     }
 
+    /**
+     * Called by pressing "Save score" button.
+     * Asks player to enter their name.
+     */
     void saveScoreStage() {
         Stage stage = new Stage();
 
@@ -98,6 +164,11 @@ public class MazeGame extends Application {
         stage.show();
     }
 
+    /**
+     * Saves scores in CSV file.
+     *
+     * @param textArea the text area
+     */
     private void saveScoresToFile(TextField textArea) {
         for (var p : playerList) {
             if (p.getName().equals(textArea.getText())) {
@@ -110,9 +181,12 @@ public class MazeGame extends Application {
             playerList.add(player);
         }
         player.addScore(currentScore);
-        CSVMethods.CSVExport(filePath, playerList);
+        CSVMethods.CSVExport(playerList, filePath);
     }
 
+    /**
+     * Show best scores stage.
+     */
     void showScoresStage() {
         var vBoxPlayers = new VBox();
         var textPlayers = new Text();
@@ -153,6 +227,11 @@ public class MazeGame extends Application {
     }
 
 
+    /**
+     * Start game.
+     *
+     * @param stage the stage
+     */
     void startGame(Stage stage) {
 
         /*
@@ -214,7 +293,7 @@ public class MazeGame extends Application {
 
 /* ========================================Making a maze======================================== */
         maze = new LevelMap(size);
-        mazeSize = maze.getMazeMatrix().length;
+        int mazeSize = maze.getMazeMatrix().length;
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
         squareSide = (int) (screenBounds.getHeight() - 30) / (mazeSize + 3);
 
@@ -286,8 +365,28 @@ public class MazeGame extends Application {
         moving.start();
     }
 
+    /**
+     * The Moving type which extends external class GameLoopTimer.
+     *
+     * @see external.GameLoopTimer
+     */
     class Moving extends GameLoopTimer {
+        /**
+         * The elapsed seconds.
+         */
         private double elapsedSeconds;
+
+        /**
+         * Instantiates a new Moving.
+         */
+        Moving () {}
+
+        /**
+         * Tick method overriding method from GameLoopTimer.
+         * Is used to control the speed of animation.
+         *
+         * @param secondsSinceLastFrame the seconds since last frame
+         */
         @Override
         public void tick(float secondsSinceLastFrame) {
             if (secondsSinceLastFrame < 60) {elapsedSeconds += secondsSinceLastFrame;}
@@ -306,6 +405,11 @@ public class MazeGame extends Application {
             displayInfo();
         }
 
+        /**
+         * Is player movable in Y-axis boolean.
+         *
+         * @return the boolean
+         */
         private boolean isPlayerMovableY() {
             int i = (int) ((circlePlayer.getCenterY() + (circlePlayer.getRadius() + 1) * keyPressedDirection.get("UP")) / squareSide);
             int j = (int) ((circlePlayer.getCenterX() + (circlePlayer.getRadius())) / squareSide);
@@ -313,6 +417,11 @@ public class MazeGame extends Application {
             return maze.getMazeMatrix()[i][j] != 2;
         }
 
+        /**
+         * Is player movable in X-axis boolean.
+         *
+         * @return the boolean
+         */
         private boolean isPlayerMovableX() {
             int i = (int) ((circlePlayer.getCenterY() + (circlePlayer.getRadius())) / squareSide);
             int j = (int) ((circlePlayer.getCenterX() + (circlePlayer.getRadius() + 1) * keyPressedDirection.get("LEFT")) / squareSide);
@@ -320,12 +429,20 @@ public class MazeGame extends Application {
             return maze.getMazeMatrix()[i][j] != 2;
         }
 
+        /**
+         * Has player reached exit cell boolean.
+         *
+         * @return the boolean
+         */
         private boolean isExit() {
             int i = (int) ((circlePlayer.getCenterY() + (circlePlayer.getRadius())) / squareSide);
             int j = (int) ((circlePlayer.getCenterX() + (circlePlayer.getRadius())) / squareSide);
             return maze.getMazeMatrix()[i][j] == 5;
         }
 
+        /**
+         * Display info.
+         */
         private void displayInfo() {
             lbPlayerXY.setText("X: " + decimalFormat.format(circlePlayer.getCenterX()) +
                     "\nY: " + decimalFormat.format(circlePlayer.getCenterY()));
