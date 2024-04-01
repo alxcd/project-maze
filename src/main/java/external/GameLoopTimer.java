@@ -1,4 +1,4 @@
-package fi.karelia.edu.maze;
+package external;
 
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.DoubleProperty;

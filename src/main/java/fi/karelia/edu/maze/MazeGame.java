@@ -1,12 +1,10 @@
 package fi.karelia.edu.maze;
 
 /* TODO:
-    - player class with
-    - make scoreboard with Player class - extend Circle class?
     - make gameover condition
-    - player select, new player
 */
 
+import external.GameLoopTimer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,18 +12,20 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * The type Maze game.
@@ -39,10 +39,10 @@ public class MazeGame extends Application {
     private Label lbPlayerGrid;
     private Label lbGameTimer;
     private LevelMap maze;
-    private HashMap<String, Integer> keyPressedDirection = new HashMap<>();
+    private final HashMap<String, Integer> keyPressedDirection = new HashMap<>();
     private Label lbFrameRateLabel;
     private Stage pStage;
-    DecimalFormat decimalFormat = new DecimalFormat("0.00");
+    private final DecimalFormat decimalFormat = new DecimalFormat("0.00");
     private Player player;
     private double currentScore;
     private ArrayList<Player> playerList;
@@ -67,7 +67,7 @@ public class MazeGame extends Application {
     }
 
     void nextLevel(Stage stage, double elapsedSeconds) {
-        currentScore += (60 - elapsedSeconds) * size;
+        currentScore += (60 - elapsedSeconds) * (size - 2);
         size += 1;
         startGame(stage);
     }
@@ -95,8 +95,6 @@ public class MazeGame extends Application {
             stage.close();
         });
 
-        //player = new Player(textArea.getText(), currentScore);
-
         stage.show();
     }
 
@@ -116,14 +114,18 @@ public class MazeGame extends Application {
     }
 
     void showScoresStage() {
-        Stage stage = new Stage();
-
+        var vBoxPlayers = new VBox();
+        var textPlayers = new Text();
+        textPlayers.setFont(new Font(20));
+        vBoxPlayers.getChildren().add(textPlayers);
+        var vBoxScores = new VBox();
+        var textScores = new Text();
+        textScores.setFont(new Font(20));
+        vBoxScores.getChildren().add(textScores);
         var hBoxScores = new HBox();
-        var text = new Text();
-        hBoxScores.getChildren().add(text);
+        hBoxScores.getChildren().addAll(vBoxPlayers, vBoxScores);
 
         var scores = new ArrayList<Score>();
-        Comparator<Score> compareByScore = Comparator.comparing(Score::getScore);
         for (Player p : playerList) {
             for (double score : p.getBestScores()) {
                 if (score > 0) {
@@ -133,12 +135,16 @@ public class MazeGame extends Application {
         }
         Collections.sort(scores);
 
-        var textString = "";
+        var textScoresString = "";
+        var textPlayersString = "";
         for (int i = 0; i < scores.size(); i++) {
-                textString += i + 1 + ". " + scores.get(i).getName() + " " + decimalFormat.format(scores.get(i).getScore()) + "\n";
+                textPlayersString += i + 1 + ". " + scores.get(i).getName() + "\n";
+                textScoresString += " " + decimalFormat.format(scores.get(i).getScore()) + "\n";
         }
-        text.setText(textString);
+        textPlayers.setText(textPlayersString);
+        textScores.setText(textScoresString);
 
+        Stage stage = new Stage();
         Scene scene = new Scene(hBoxScores);
         stage.setTitle("Best scores");
         stage.setScene(scene);
@@ -169,18 +175,19 @@ public class MazeGame extends Application {
         //vBoxBottom1
         lbPlayerXY = new Label();
         lbPlayerGrid = new Label();
-        VBox vBoxBottom1 = new VBox();
+        var vBoxBottom1 = new VBox();
         vBoxBottom1.setPadding(new Insets(15));
         vBoxBottom1.getChildren().addAll(lbPlayerXY, lbPlayerGrid);
 
         //vBoxBottom2
         lbGameTimer = new Label("60");
-        VBox vBoxBottom2 = new VBox();
+        lbGameTimer.setFont(new Font(30));
+        var vBoxBottom2 = new VBox();
         vBoxBottom2.setPadding(new Insets(15));
         vBoxBottom2.getChildren().add(lbGameTimer);
 
         //vBoxBottom3
-        VBox vBoxBottom3 = new VBox();
+        var vBoxBottom3 = new VBox();
         var btnNewGame = new Button("New game");
         btnNewGame.setFocusTraversable(false);
         var btnSaveScore = new Button("Save score");
@@ -191,17 +198,25 @@ public class MazeGame extends Application {
         vBoxBottom3.setSpacing(5);
         vBoxBottom3.getChildren().addAll(btnNewGame, btnSaveScore, btnShowScores);
 
-        //hBoxBottom
+        //vBoxBottom4
+        var vBoxBottom4 = new VBox();
         lbFrameRateLabel = new Label();
+        vBoxBottom4.setPadding(new Insets(15));
+        vBoxBottom4.setSpacing(5);
+        vBoxBottom4.getChildren().add(lbFrameRateLabel);
+
+        //hBoxBottom
         var hBoxBottom = new HBox();
         root.setBottom(hBoxBottom);
-        hBoxBottom.getChildren().addAll(vBoxBottom3, vBoxBottom1, vBoxBottom2, lbFrameRateLabel);
+        hBoxBottom.getChildren().addAll(vBoxBottom3, vBoxBottom1, vBoxBottom2, vBoxBottom4);
+        hBoxBottom.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, null, null)));
+        hBoxBottom.setPadding(new Insets(5));
 
 /* ========================================Making a maze======================================== */
         maze = new LevelMap(size);
         mazeSize = maze.getMazeMatrix().length;
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-        squareSide = (int) screenBounds.getHeight() / (mazeSize + 3);
+        squareSide = (int) (screenBounds.getHeight() - 30) / (mazeSize + 3);
 
         var grid0 = new GridPane();
         grid0.setGridLinesVisible(false);
@@ -316,7 +331,8 @@ public class MazeGame extends Application {
                     "\nY: " + decimalFormat.format(circlePlayer.getCenterY()));
             lbPlayerGrid.setText("Grid: " + (int) (circlePlayer.getCenterY() / squareSide)
                     + ", " + (int) (circlePlayer.getCenterX() / squareSide));
-            lbGameTimer.setText("" + (int) (60 - elapsedSeconds) + " Score: " + currentScore);
+            lbGameTimer.setText("" + (int) (60 - elapsedSeconds));
+            lbFrameRateLabel.setText("Score: " + decimalFormat.format(currentScore));
         }
     }
 }

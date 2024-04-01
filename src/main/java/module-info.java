@@ -6,4 +6,6 @@ module fi.karelia.edu.maze {
 
     opens fi.karelia.edu.maze to javafx.fxml;
     exports fi.karelia.edu.maze;
+    exports external;
+    opens external to javafx.fxml;
 }
