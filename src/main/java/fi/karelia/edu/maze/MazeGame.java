@@ -32,7 +32,7 @@ import java.util.HashMap;
 /**
  * The Maze Game.
  */
-public abstract class MazeGame extends Application {
+public class MazeGame extends Application {
     /**
      * The size of maze.
      */
