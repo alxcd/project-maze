@@ -16,6 +16,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -93,6 +95,18 @@ public class MazeGame extends Application {
      * The file path to CSV-file of players and their scores.
      */
     private final String filePath = "src/main/resources/fi/karelia/edu/maze/players.csv";
+    /**
+     * The Image for exit.
+     */
+    ImageView imageExit = new ImageView(new Image("file:src/main/resources/fi/karelia/edu/maze/exit.png"));
+    /**
+     * The Image for keyboard keys.
+     */
+    ImageView imageKeys = new ImageView(new Image("file:src/main/resources/fi/karelia/edu/maze/keys.png"));
+    /**
+     * The Center grid.
+     */
+    private int centerGrid;
 
     /**
      * The entry point of application.
@@ -108,7 +122,7 @@ public class MazeGame extends Application {
      * Copies primaryStage to pStage and calls startGame method
      *
      * @param primaryStage the primary stage
-     * @see #startGame(Stage) #startGame(Stage)
+     * @see #startGame(Stage) #startGame(Stage)#startGame(Stage)
      */
     @Override
     public void start(Stage primaryStage) {
@@ -234,14 +248,6 @@ public class MazeGame extends Application {
      */
     void startGame(Stage stage) {
 
-        /*
-         * <BorderPane root.Center>
-         * <Pane pane>
-         * <GridPane grid0></GridPane>
-         * <GridPane grid1></GridPane>
-         * </Pane>
-         * </BorderPane>
-         */
         playerList = CSVMethods.CSVImport(filePath);
 
         /* ========================================Drawing JavaFX elements======================================== */
@@ -287,8 +293,10 @@ public class MazeGame extends Application {
         //hBoxBottom
         var hBoxBottom = new HBox();
         root.setBottom(hBoxBottom);
-        hBoxBottom.getChildren().addAll(vBoxBottom3, vBoxBottom1, vBoxBottom2, vBoxBottom4);
-        hBoxBottom.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, null, null)));
+        imageKeys.setPreserveRatio(true);
+        imageKeys.setFitHeight(100);
+        hBoxBottom.getChildren().addAll(vBoxBottom3, vBoxBottom1, vBoxBottom2, vBoxBottom4, imageKeys);
+        hBoxBottom.setBackground(new Background(new BackgroundFill(Color.TEAL, null, null)));
         hBoxBottom.setPadding(new Insets(5));
 
 /* ========================================Making a maze======================================== */
@@ -299,20 +307,22 @@ public class MazeGame extends Application {
 
         var grid0 = new GridPane();
         grid0.setGridLinesVisible(false);
-
-        // drawing the maze from matrix on GridPane
+        imageExit.setFitHeight(squareSide);
+        imageExit.setFitWidth(squareSide);
+        // drawing maze from matrix on GridPane
         for (int i = 0; i < mazeSize; i++) {
             for (int j = 0; j < mazeSize; j++) {
-                if (maze.getMazeMatrix()[i][j] == 2) grid0.add(new Rectangle(squareSide, squareSide, Color.BLACK), j, i);
-                else grid0.add(new Rectangle(squareSide, squareSide, Color.TRANSPARENT), j, i);
+                if (maze.getMazeMatrix()[i][j] == 2) grid0.add(new Rectangle(squareSide, squareSide, Color.SLATEGRAY), j, i);
+                else if (maze.getMazeMatrix()[i][j] == 5) grid0.add(imageExit, j, i);
+                else grid0.add(new Rectangle(squareSide, squareSide, Color.BEIGE), j, i);
                 //grid0.add(new Text(Integer.toString(maze.getMazeMatrix()[i][j])), j, i);
             }
         }
 
         // drawing the player circle in the center
         int circleRadius = squareSide / 3;
-        int centerGrid = (size % 2 != 0) ? (mazeSize / 2) : (mazeSize / 2 + 1);
-        circlePlayer = new Circle(circleRadius, Color.GREENYELLOW);
+        centerGrid = (size % 2 != 0) ? (mazeSize / 2) : (mazeSize / 2 + 1);
+        circlePlayer = new Circle(circleRadius, Color.GREEN);
         StackPane.setAlignment(circlePlayer, Pos.TOP_LEFT);
         circlePlayer.setCenterX(squareSide * centerGrid + circlePlayer.getRadius() + squareSide / 4.0);
         circlePlayer.setCenterY(squareSide * centerGrid + circlePlayer.getRadius() + squareSide / 4.0);
@@ -389,17 +399,27 @@ public class MazeGame extends Application {
          */
         @Override
         public void tick(float secondsSinceLastFrame) {
-            if (secondsSinceLastFrame < 60) {elapsedSeconds += secondsSinceLastFrame;}
+            if (secondsSinceLastFrame < 60) {
+                elapsedSeconds += secondsSinceLastFrame;
+            }
+            int i = (int) ((circlePlayer.getCenterY() + (circlePlayer.getRadius())) / squareSide);
+            int j = (int) ((circlePlayer.getCenterX() + (circlePlayer.getRadius())) / squareSide);
+            if (!(0 <= i && i < maze.getMazeMatrix().length && 0 <= j && j < maze.getMazeMatrix().length)) {
+                circlePlayer.setCenterX(squareSide * centerGrid + circlePlayer.getRadius() + squareSide / 4.0);
+                circlePlayer.setCenterY(squareSide * centerGrid + circlePlayer.getRadius() + squareSide / 4.0);
+            }
             if (keyPressedDirection.get("UP") != 0 || keyPressedDirection.get("LEFT") != 0) {
                 double speed = 2 * secondsSinceLastFrame * squareSide;
-                if (isPlayerMovableY()) {
-                    circlePlayer.setCenterY(circlePlayer.getCenterY() + speed * keyPressedDirection.get("UP"));
-                }
-                if (isPlayerMovableX()) {
-                    circlePlayer.setCenterX(circlePlayer.getCenterX() + speed * keyPressedDirection.get("LEFT"));
-                }
                 if (isExit()) {
                     nextLevel(pStage, elapsedSeconds);
+                }
+                else {
+                    if (isPlayerMovableY()) {
+                    circlePlayer.setCenterY(circlePlayer.getCenterY() + speed * keyPressedDirection.get("UP"));
+                    }
+                    if (isPlayerMovableX()) {
+                        circlePlayer.setCenterX(circlePlayer.getCenterX() + speed * keyPressedDirection.get("LEFT"));
+                    }
                 }
             }
             displayInfo();
@@ -413,8 +433,9 @@ public class MazeGame extends Application {
         private boolean isPlayerMovableY() {
             int i = (int) ((circlePlayer.getCenterY() + (circlePlayer.getRadius() + 1) * keyPressedDirection.get("UP")) / squareSide);
             int j = (int) ((circlePlayer.getCenterX() + (circlePlayer.getRadius())) / squareSide);
-            if (i > maze.getMazeMatrix().length || j > maze.getMazeMatrix().length) return false;
-            return maze.getMazeMatrix()[i][j] != 2;
+            return 0 <= i && i < maze.getMazeMatrix().length &&
+                   0 <= j && j < maze.getMazeMatrix().length &&
+                   maze.getMazeMatrix()[i][j] != 2;
         }
 
         /**
@@ -425,8 +446,9 @@ public class MazeGame extends Application {
         private boolean isPlayerMovableX() {
             int i = (int) ((circlePlayer.getCenterY() + (circlePlayer.getRadius())) / squareSide);
             int j = (int) ((circlePlayer.getCenterX() + (circlePlayer.getRadius() + 1) * keyPressedDirection.get("LEFT")) / squareSide);
-            if (i > maze.getMazeMatrix().length || j > maze.getMazeMatrix().length) return false;
-            return maze.getMazeMatrix()[i][j] != 2;
+            return 0 <= i && i < maze.getMazeMatrix().length &&
+                   0 <= j && j < maze.getMazeMatrix().length &&
+                   (maze.getMazeMatrix()[i][j] == 1 || maze.getMazeMatrix()[i][j] == 4);
         }
 
         /**
