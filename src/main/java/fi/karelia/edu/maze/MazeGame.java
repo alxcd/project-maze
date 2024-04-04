@@ -95,8 +95,19 @@ public class MazeGame extends Application {
      * The file path to CSV-file of players and their scores.
      */
     private final String filePath = "src/main/resources/fi/karelia/edu/maze/players.csv";
-    ImageView imageView = new ImageView(new Image("file:src/main/resources/fi/karelia/edu/maze/exit.png"));
+    /**
+     * The Image for exit.
+     */
+    ImageView imageExit = new ImageView(new Image("file:src/main/resources/fi/karelia/edu/maze/exit.png"));
+    /**
+     * The Image for keyboard keys.
+     */
+    ImageView imageKeys = new ImageView(new Image("file:src/main/resources/fi/karelia/edu/maze/keys.png"));
+    /**
+     * The Center grid.
+     */
     private int centerGrid;
+
     /**
      * The entry point of application.
      *
@@ -111,7 +122,7 @@ public class MazeGame extends Application {
      * Copies primaryStage to pStage and calls startGame method
      *
      * @param primaryStage the primary stage
-     * @see #startGame(Stage) #startGame(Stage)
+     * @see #startGame(Stage) #startGame(Stage)#startGame(Stage)
      */
     @Override
     public void start(Stage primaryStage) {
@@ -237,14 +248,6 @@ public class MazeGame extends Application {
      */
     void startGame(Stage stage) {
 
-        /*
-         * <BorderPane root.Center>
-         * <Pane pane>
-         * <GridPane grid0></GridPane>
-         * <GridPane grid1></GridPane>
-         * </Pane>
-         * </BorderPane>
-         */
         playerList = CSVMethods.CSVImport(filePath);
 
         /* ========================================Drawing JavaFX elements======================================== */
@@ -290,7 +293,9 @@ public class MazeGame extends Application {
         //hBoxBottom
         var hBoxBottom = new HBox();
         root.setBottom(hBoxBottom);
-        hBoxBottom.getChildren().addAll(vBoxBottom3, vBoxBottom1, vBoxBottom2, vBoxBottom4);
+        imageKeys.setPreserveRatio(true);
+        imageKeys.setFitHeight(100);
+        hBoxBottom.getChildren().addAll(vBoxBottom3, vBoxBottom1, vBoxBottom2, vBoxBottom4, imageKeys);
         hBoxBottom.setBackground(new Background(new BackgroundFill(Color.TEAL, null, null)));
         hBoxBottom.setPadding(new Insets(5));
 
@@ -302,13 +307,13 @@ public class MazeGame extends Application {
 
         var grid0 = new GridPane();
         grid0.setGridLinesVisible(false);
-        imageView.setFitHeight(squareSide);
-        imageView.setFitWidth(squareSide);
+        imageExit.setFitHeight(squareSide);
+        imageExit.setFitWidth(squareSide);
         // drawing maze from matrix on GridPane
         for (int i = 0; i < mazeSize; i++) {
             for (int j = 0; j < mazeSize; j++) {
                 if (maze.getMazeMatrix()[i][j] == 2) grid0.add(new Rectangle(squareSide, squareSide, Color.SLATEGRAY), j, i);
-                else if (maze.getMazeMatrix()[i][j] == 5) grid0.add(imageView, j, i);
+                else if (maze.getMazeMatrix()[i][j] == 5) grid0.add(imageExit, j, i);
                 else grid0.add(new Rectangle(squareSide, squareSide, Color.BEIGE), j, i);
                 //grid0.add(new Text(Integer.toString(maze.getMazeMatrix()[i][j])), j, i);
             }
