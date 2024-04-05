@@ -2,9 +2,7 @@ package fi.karelia.edu.maze;
 
 /* TODO:
     - make GameOver condition
-    - correct bug with player moving out of bounds
     - speed is still an issue
-    - make game fun
 */
 
 import external.GameLoopTimer;
