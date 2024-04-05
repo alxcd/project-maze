@@ -68,9 +68,9 @@ public class MazeGame extends Application {
      */
     private final HashMap<String, Integer> keyPressedDirection = new HashMap<>();
     /**
-     * The frame rate label.
+     * The score label.
      */
-    private Label lbFrameRateLabel;
+    private Label lbScore;
     /**
      * The copy of primaryStage.
      */
@@ -285,10 +285,11 @@ public class MazeGame extends Application {
 
         //vBoxBottom4
         var vBoxBottom4 = new VBox();
-        lbFrameRateLabel = new Label();
+        lbScore = new Label();
+        lbScore.setFont(new Font(18));
         vBoxBottom4.setPadding(new Insets(15));
         vBoxBottom4.setSpacing(5);
-        vBoxBottom4.getChildren().add(lbFrameRateLabel);
+        vBoxBottom4.getChildren().add(lbScore);
 
         //hBoxBottom
         var hBoxBottom = new HBox();
@@ -471,7 +472,7 @@ public class MazeGame extends Application {
             lbPlayerGrid.setText("Grid: " + (int) (circlePlayer.getCenterY() / squareSide)
                     + ", " + (int) (circlePlayer.getCenterX() / squareSide));
             lbGameTimer.setText("" + (int) (60 - elapsedSeconds));
-            lbFrameRateLabel.setText("Score: " + decimalFormat.format(currentScore));
+            lbScore.setText("Score: " + decimalFormat.format(currentScore));
         }
     }
 }
