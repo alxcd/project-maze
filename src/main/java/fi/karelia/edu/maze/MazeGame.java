@@ -136,7 +136,9 @@ public class MazeGame extends Application {
      * @param elapsedSeconds the elapsed seconds
      */
     void nextLevel(Stage stage, double elapsedSeconds) {
-        currentScore += (60 - elapsedSeconds) * (size - 2);
+        if (60 - elapsedSeconds > 0) {
+            currentScore += (60 - elapsedSeconds) * (size - 2);
+        }
         size += 1;
         startGame(stage);
     }
@@ -254,19 +256,20 @@ public class MazeGame extends Application {
         var stackPane = new StackPane();
         pane.getChildren().add(stackPane);
         root.setCenter(pane);
+        var insets = new Insets(15);
 
         //vBoxBottom1
         lbPlayerXY = new Label();
         lbPlayerGrid = new Label();
         var vBoxBottom1 = new VBox();
-        vBoxBottom1.setPadding(new Insets(15));
+        vBoxBottom1.setPadding(insets);
         vBoxBottom1.getChildren().addAll(lbPlayerXY, lbPlayerGrid);
 
         //vBoxBottom2
         lbGameTimer = new Label("60");
         lbGameTimer.setFont(new Font(30));
         var vBoxBottom2 = new VBox();
-        vBoxBottom2.setPadding(new Insets(15));
+        vBoxBottom2.setPadding(insets);
         vBoxBottom2.getChildren().add(lbGameTimer);
 
         //vBoxBottom3
@@ -277,7 +280,7 @@ public class MazeGame extends Application {
         btnSaveScore.setFocusTraversable(false);
         var btnShowScores = new Button("Show scores");
         btnShowScores.setFocusTraversable(false);
-        vBoxBottom3.setPadding(new Insets(15));
+        vBoxBottom3.setPadding(insets);
         vBoxBottom3.setSpacing(5);
         vBoxBottom3.getChildren().addAll(btnNewGame, btnSaveScore, btnShowScores);
 
@@ -285,16 +288,23 @@ public class MazeGame extends Application {
         var vBoxBottom4 = new VBox();
         lbScore = new Label();
         lbScore.setFont(new Font(18));
-        vBoxBottom4.setPadding(new Insets(15));
+        vBoxBottom4.setPadding(insets);
         vBoxBottom4.setSpacing(5);
         vBoxBottom4.getChildren().add(lbScore);
+
+        //vBoxBottom5
+        var vBoxBottom5 = new VBox();
+        vBoxBottom5.setPadding(insets);
+        vBoxBottom5.setSpacing(5);
+        vBoxBottom5.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DASHED, new CornerRadii(2), new BorderWidths(2))));
+        imageKeys.setPreserveRatio(true);
+        imageKeys.setFitHeight(80);
+        vBoxBottom5.getChildren().addAll(new Text("Use keyboard keys"),imageKeys);
 
         //hBoxBottom
         var hBoxBottom = new HBox();
         root.setBottom(hBoxBottom);
-        imageKeys.setPreserveRatio(true);
-        imageKeys.setFitHeight(100);
-        hBoxBottom.getChildren().addAll(vBoxBottom3, vBoxBottom1, vBoxBottom2, vBoxBottom4, imageKeys);
+        hBoxBottom.getChildren().addAll(vBoxBottom3, vBoxBottom1, vBoxBottom2, vBoxBottom4, vBoxBottom5);
         hBoxBottom.setBackground(new Background(new BackgroundFill(Color.TEAL, null, null)));
         hBoxBottom.setPadding(new Insets(5));
 
@@ -401,8 +411,8 @@ public class MazeGame extends Application {
             if (secondsSinceLastFrame < 60) {
                 elapsedSeconds += secondsSinceLastFrame;
             }
-            int i = (int) ((circlePlayer.getCenterY() + (circlePlayer.getRadius())) / squareSide);
-            int j = (int) ((circlePlayer.getCenterX() + (circlePlayer.getRadius())) / squareSide);
+            int i = (int) ((circlePlayer.getCenterY()) / squareSide);
+            int j = (int) ((circlePlayer.getCenterX()) / squareSide);
             if (!(0 <= i && i < maze.getMazeMatrix().length && 0 <= j && j < maze.getMazeMatrix().length)) {
                 circlePlayer.setCenterX(squareSide * centerGrid + circlePlayer.getRadius() + squareSide / 4.0);
                 circlePlayer.setCenterY(squareSide * centerGrid + circlePlayer.getRadius() + squareSide / 4.0);
@@ -431,7 +441,7 @@ public class MazeGame extends Application {
          */
         private boolean isPlayerMovableY() {
             int i = (int) ((circlePlayer.getCenterY() + (circlePlayer.getRadius() + 1) * keyPressedDirection.get("UP")) / squareSide);
-            int j = (int) ((circlePlayer.getCenterX() + (circlePlayer.getRadius())) / squareSide);
+            int j = (int) (circlePlayer.getCenterX() / squareSide);
             return 0 <= i && i < maze.getMazeMatrix().length &&
                    0 <= j && j < maze.getMazeMatrix().length &&
                    maze.getMazeMatrix()[i][j] != 2;
@@ -443,7 +453,7 @@ public class MazeGame extends Application {
          * @return the boolean
          */
         private boolean isPlayerMovableX() {
-            int i = (int) ((circlePlayer.getCenterY() + (circlePlayer.getRadius())) / squareSide);
+            int i = (int) (circlePlayer.getCenterY() / squareSide);
             int j = (int) ((circlePlayer.getCenterX() + (circlePlayer.getRadius() + 1) * keyPressedDirection.get("LEFT")) / squareSide);
             return 0 <= i && i < maze.getMazeMatrix().length &&
                    0 <= j && j < maze.getMazeMatrix().length &&
@@ -456,8 +466,8 @@ public class MazeGame extends Application {
          * @return the boolean
          */
         private boolean isExit() {
-            int i = (int) ((circlePlayer.getCenterY() + (circlePlayer.getRadius())) / squareSide);
-            int j = (int) ((circlePlayer.getCenterX() + (circlePlayer.getRadius())) / squareSide);
+            int i = (int) (circlePlayer.getCenterY() / squareSide);
+            int j = (int) (circlePlayer.getCenterX() / squareSide);
             return maze.getMazeMatrix()[i][j] == 5;
         }
 
@@ -469,7 +479,7 @@ public class MazeGame extends Application {
                     "\nY: " + decimalFormat.format(circlePlayer.getCenterY()));
             lbPlayerGrid.setText("Grid: " + (int) (circlePlayer.getCenterY() / squareSide)
                     + ", " + (int) (circlePlayer.getCenterX() / squareSide));
-            lbGameTimer.setText("" + (int) (60 - elapsedSeconds));
+            lbGameTimer.setText("" + (int) (60 - elapsedSeconds > 0 ? 60 - elapsedSeconds : 0));
             lbScore.setText("Score: " + decimalFormat.format(currentScore));
         }
     }
