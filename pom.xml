@@ -67,6 +67,7 @@
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
+                            <executable>${java.home}/bin/java</executable>
                         </configuration>
                     </execution>
                 </executions>

@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MazeGame" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="fi.karelia.edu.maze.MazeGame" />
+    <module name="maze" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="fi.karelia.edu.maze.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
