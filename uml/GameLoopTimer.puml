@@ -1,0 +1,35 @@
+@startuml
+abstract class external.GameLoopTimer {
+~ long pauseStart
+~ long animationStart
+~ DoubleProperty animationDuration
+~ long lastFrameTimeNanos
+~ boolean isPaused
+~ boolean isActive
+~ boolean pauseScheduled
+~ boolean playScheduled
+~ boolean restartScheduled
++ boolean isPaused()
++ boolean isActive()
++ DoubleProperty animationDurationProperty()
++ void pause()
++ void play()
++ void start()
++ void stop()
++ void handle(long)
++ {abstract}void tick(float)
+}
+note top of external.GameLoopTimer
+
+ * @author Ed Eden-Rump
+ * @created 27/07/2020 - 07:34
+ * @project EdenCoding Space Shooter
+ *
+end note
+
+
+
+
+
+javafx.animation.AnimationTimer <|-- external.GameLoopTimer
+@enduml
