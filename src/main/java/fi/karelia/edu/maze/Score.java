@@ -46,7 +46,8 @@ public class Score implements Comparable<Score> {
     }
 
     /**
-     * Compare to int.
+     * Compare to int. Implemented so class could sort entries based on score,
+     * which would sort names as well.
      *
      * @param score the score
      * @return the int

@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 /**
- * Methods to import/export from/to CSV file of Players.
+ * Abstract class for methods to import/export from/to CSV file of Players.
  */
 public abstract class CSVMethods {
     /**
@@ -52,6 +52,6 @@ public abstract class CSVMethods {
                 output.print("\n");
             }
         }
-        catch (FileNotFoundException e) {}
+        catch (FileNotFoundException e) {e.printStackTrace();}
     }
 }
