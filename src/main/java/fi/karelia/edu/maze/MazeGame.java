@@ -3,6 +3,7 @@ package fi.karelia.edu.maze;
 /* TODO:
     - make GameOver condition
     - speed is still an issue
+    - scoring system brakes after reaching later levels
 */
 
 import external.GameLoopTimer;
@@ -18,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -62,7 +64,7 @@ public class MazeGame extends Application {
      */
     private LevelMap maze;
     /**
-     * The Key pressed direction.
+     * The Key pressed direction. For keeping track of pressed keyboard keys.
      */
     private final HashMap<String, Integer> keyPressedDirection = new HashMap<>();
     /**
@@ -74,7 +76,7 @@ public class MazeGame extends Application {
      */
     private Stage pStage;
     /**
-     * The Decimal format.
+     * The Decimal format for displaying double numbers.
      */
     private final DecimalFormat decimalFormat = new DecimalFormat("0.00");
     /**
@@ -102,9 +104,9 @@ public class MazeGame extends Application {
      */
     ImageView imageKeys = new ImageView(new Image("file:src/main/resources/fi/karelia/edu/maze/keys.png"));
     /**
-     * The Center grid.
+     * The Center cell for placing player.
      */
-    private int centerGrid;
+    private int centerCell;
 
     /**
      * The entry point of application.
@@ -180,6 +182,7 @@ public class MazeGame extends Application {
 
     /**
      * Saves scores in CSV file.
+     * Checks if player exists, if not - adds new player to file.
      *
      * @param textArea the text area
      */
@@ -200,6 +203,7 @@ public class MazeGame extends Application {
 
     /**
      * Show best scores stage.
+     * Creates new ArrayList of Score to determine best scores.
      */
     void showScoresStage() {
         var vBoxPlayers = new VBox();
@@ -240,6 +244,7 @@ public class MazeGame extends Application {
         stage.show();
     }
 
+/* ============================================Main part of the project======================================= */
 
     /**
      * Start game.
@@ -250,61 +255,56 @@ public class MazeGame extends Application {
 
         playerList = CSVMethods.CSVImport(filePath);
 
-        /* ========================================Drawing JavaFX elements======================================== */
+/* ========================================Drawing JavaFX elements======================================== */
         var root = new BorderPane();
         var pane = new Pane();
         var stackPane = new StackPane();
         pane.getChildren().add(stackPane);
         root.setCenter(pane);
-        var insets = new Insets(15);
+        var insets = new Insets(5, 15, 5,15);
 
-        //vBoxBottom1
-        lbPlayerXY = new Label();
-        lbPlayerGrid = new Label();
+        //vBoxBottom1 - buttons menu
         var vBoxBottom1 = new VBox();
-        vBoxBottom1.setPadding(insets);
-        vBoxBottom1.getChildren().addAll(lbPlayerXY, lbPlayerGrid);
-
-        //vBoxBottom2
-        lbGameTimer = new Label("60");
-        lbGameTimer.setFont(new Font(30));
-        var vBoxBottom2 = new VBox();
-        vBoxBottom2.setPadding(insets);
-        vBoxBottom2.getChildren().add(lbGameTimer);
-
-        //vBoxBottom3
-        var vBoxBottom3 = new VBox();
         var btnNewGame = new Button("New game");
         btnNewGame.setFocusTraversable(false);
         var btnSaveScore = new Button("Save score");
         btnSaveScore.setFocusTraversable(false);
         var btnShowScores = new Button("Show scores");
         btnShowScores.setFocusTraversable(false);
-        vBoxBottom3.setPadding(insets);
-        vBoxBottom3.setSpacing(5);
-        vBoxBottom3.getChildren().addAll(btnNewGame, btnSaveScore, btnShowScores);
+        vBoxBottom1.setPadding(insets);
+        vBoxBottom1.setSpacing(5);
+        vBoxBottom1.getChildren().addAll(btnNewGame, btnSaveScore, btnShowScores);
 
-        //vBoxBottom4
-        var vBoxBottom4 = new VBox();
+        //vBoxBottom2 - info about coordinates and position on a grid
+        lbPlayerXY = new Label();
+        lbPlayerGrid = new Label();
+        var vBoxBottom2 = new VBox();
+        vBoxBottom2.setPadding(insets);
+        vBoxBottom2.getChildren().addAll(lbPlayerXY, lbPlayerGrid);
+
+        //vBoxBottom3 - timer
+        lbGameTimer = new Label("60");
+        lbGameTimer.setFont(new Font(30));
         lbScore = new Label();
         lbScore.setFont(new Font(18));
+        var vBoxBottom3 = new VBox();
+        vBoxBottom3.setPadding(insets);
+        vBoxBottom3.getChildren().addAll(lbGameTimer, lbScore);
+
+        //vBoxBottom4 - help
+        var vBoxBottom4 = new VBox();
         vBoxBottom4.setPadding(insets);
         vBoxBottom4.setSpacing(5);
-        vBoxBottom4.getChildren().add(lbScore);
-
-        //vBoxBottom5
-        var vBoxBottom5 = new VBox();
-        vBoxBottom5.setPadding(insets);
-        vBoxBottom5.setSpacing(5);
-        vBoxBottom5.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DASHED, new CornerRadii(2), new BorderWidths(2))));
+        vBoxBottom4.setBorder(new Border(new BorderStroke(Color.BLACK,
+                BorderStrokeStyle.DASHED, new CornerRadii(5), new BorderWidths(2))));
         imageKeys.setPreserveRatio(true);
         imageKeys.setFitHeight(80);
-        vBoxBottom5.getChildren().addAll(new Text("Use keyboard keys"),imageKeys);
+        vBoxBottom4.getChildren().addAll(new Text("Use keyboard keys"),imageKeys);
 
-        //hBoxBottom
+        //hBoxBottom - includes all VBoxes
         var hBoxBottom = new HBox();
         root.setBottom(hBoxBottom);
-        hBoxBottom.getChildren().addAll(vBoxBottom3, vBoxBottom1, vBoxBottom2, vBoxBottom4, vBoxBottom5);
+        hBoxBottom.getChildren().addAll(vBoxBottom1, vBoxBottom2, vBoxBottom3, vBoxBottom4);
         hBoxBottom.setBackground(new Background(new BackgroundFill(Color.TEAL, null, null)));
         hBoxBottom.setPadding(new Insets(5));
 
@@ -312,29 +312,29 @@ public class MazeGame extends Application {
         maze = new LevelMap(size);
         int mazeSize = maze.getMazeMatrix().length;
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-        squareSide = (int) (screenBounds.getHeight() - 30) / (mazeSize + 3);
+        squareSide = (int) (screenBounds.getHeight() - 80) / (mazeSize + 3);
 
         var grid0 = new GridPane();
         grid0.setGridLinesVisible(false);
         imageExit.setFitHeight(squareSide);
         imageExit.setFitWidth(squareSide);
-        // drawing maze from matrix on GridPane
+        // drawing maze from matrix on GridPane - drawing wall, exit and empty cells
         for (int i = 0; i < mazeSize; i++) {
             for (int j = 0; j < mazeSize; j++) {
-                if (maze.getMazeMatrix()[i][j] == 2) grid0.add(new Rectangle(squareSide, squareSide, Color.SLATEGRAY), j, i);
+                var rect = new Rectangle(squareSide, squareSide, Color.SLATEGRAY);
+                if (maze.getMazeMatrix()[i][j] == 2) grid0.add(rect, j, i);
                 else if (maze.getMazeMatrix()[i][j] == 5) grid0.add(imageExit, j, i);
                 else grid0.add(new Rectangle(squareSide, squareSide, Color.BEIGE), j, i);
-                //grid0.add(new Text(Integer.toString(maze.getMazeMatrix()[i][j])), j, i);
             }
         }
 
-        // drawing the player circle in the center
+        // drawing the player circle in the center and printing coordinates
         int circleRadius = squareSide / 3;
-        centerGrid = (size % 2 != 0) ? (mazeSize / 2) : (mazeSize / 2 + 1);
+        centerCell = (size % 2 != 0) ? (mazeSize / 2) : (mazeSize / 2 + 1);
         circlePlayer = new Circle(circleRadius, Color.GREEN);
         StackPane.setAlignment(circlePlayer, Pos.TOP_LEFT);
-        circlePlayer.setCenterX(squareSide * centerGrid + circlePlayer.getRadius() + squareSide / 4.0);
-        circlePlayer.setCenterY(squareSide * centerGrid + circlePlayer.getRadius() + squareSide / 4.0);
+        circlePlayer.setCenterX(squareSide * centerCell + circlePlayer.getRadius() + squareSide / 4.0);
+        circlePlayer.setCenterY(squareSide * centerCell + circlePlayer.getRadius() + squareSide / 4.0);
         lbPlayerXY.setText("X: " + circlePlayer.getCenterX() + " Y: " + circlePlayer.getCenterY());
         lbPlayerGrid.setText("Grid: " + circlePlayer.getCenterY() / squareSide
                 + ", " + circlePlayer.getCenterY() / squareSide);
@@ -355,6 +355,10 @@ public class MazeGame extends Application {
         btnSaveScore.setOnAction(e -> saveScoreStage());
         btnShowScores.setOnAction(e -> showScoresStage());
 
+        /* HashMap will keep UP with -1, 0, 1 values based on direction in Y axis.
+           -1 - up, 1 - down, 0 - not moving/pressed
+           Same logic applies to LEFT.
+         */
         scene.setOnKeyPressed(e -> {
             switch (e.getCode()) {
                 case UP -> keyPressedDirection.put("UP", -1);
@@ -380,6 +384,7 @@ public class MazeGame extends Application {
             }
         });
 
+        // GameLoopTimer used as extension of AnimationTimer for the tick method it uses to slow animation.
         GameLoopTimer moving = new Moving();
         moving.start();
     }
@@ -391,7 +396,7 @@ public class MazeGame extends Application {
      */
     class Moving extends GameLoopTimer {
         /**
-         * The elapsed seconds.
+         * The elapsed seconds are used to determine the score player gets from level.
          */
         private double elapsedSeconds;
 
@@ -411,12 +416,14 @@ public class MazeGame extends Application {
             if (secondsSinceLastFrame < 60) {
                 elapsedSeconds += secondsSinceLastFrame;
             }
+            // Checking coordinates fixes the bug when player got out of bound after exiting level
             int i = (int) ((circlePlayer.getCenterY()) / squareSide);
             int j = (int) ((circlePlayer.getCenterX()) / squareSide);
             if (!(0 <= i && i < maze.getMazeMatrix().length && 0 <= j && j < maze.getMazeMatrix().length)) {
-                circlePlayer.setCenterX(squareSide * centerGrid + circlePlayer.getRadius() + squareSide / 4.0);
-                circlePlayer.setCenterY(squareSide * centerGrid + circlePlayer.getRadius() + squareSide / 4.0);
+                circlePlayer.setCenterX(squareSide * centerCell + circlePlayer.getRadius() + squareSide / 4.0);
+                circlePlayer.setCenterY(squareSide * centerCell + circlePlayer.getRadius() + squareSide / 4.0);
             }
+            // Checking whether player reached exit and if it can move in any of the directions
             if (keyPressedDirection.get("UP") != 0 || keyPressedDirection.get("LEFT") != 0) {
                 double speed = 2 * secondsSinceLastFrame * squareSide;
                 if (isExit()) {
@@ -472,7 +479,7 @@ public class MazeGame extends Application {
         }
 
         /**
-         * Display info.
+         * Display info at the bottom.
          */
         private void displayInfo() {
             lbPlayerXY.setText("X: " + decimalFormat.format(circlePlayer.getCenterX()) +
@@ -480,7 +487,7 @@ public class MazeGame extends Application {
             lbPlayerGrid.setText("Grid: " + (int) (circlePlayer.getCenterY() / squareSide)
                     + ", " + (int) (circlePlayer.getCenterX() / squareSide));
             lbGameTimer.setText("" + (int) (60 - elapsedSeconds > 0 ? 60 - elapsedSeconds : 0));
-            lbScore.setText("Score: " + decimalFormat.format(currentScore));
+            lbScore.setText("Score\n" + decimalFormat.format(currentScore));
         }
     }
 }

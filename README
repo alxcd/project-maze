@@ -1,1 +1,4 @@
-GameLoopTimer.java - https://github.com/edencoding/javafx-game-dev - GNU GPLv3 Licence
+=Maze Game project for the "Programming II - Object-Oriented Programming" course=
+
+Project is licenced under MIT License, except additional class copied from Ed Eden-Rump
+external/GameLoopTimer.java - https://github.com/edencoding/javafx-game-dev - it is licenced under GNU GPLv3 Licence

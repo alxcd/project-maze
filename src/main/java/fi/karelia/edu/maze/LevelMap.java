@@ -76,7 +76,7 @@ public class LevelMap {
         mazeMatrix[cy][cx] = 1;
         ArrayList<Character> tempDirections = new ArrayList<>(directions); // shuffle in what direction try going first
         shuffle(tempDirections);
-        for (char direction : tempDirections) { // 2nd step. Checking where we can go
+        for (char direction : tempDirections) { // 2nd step. Checking in what direction we can go
             if (direction == 'N') {
                 if (cy - 2 >= 0 && mazeMatrix[cy - 2][cx] == 0) {
                     mazeMatrix[cy - 1][cx] = 4;
