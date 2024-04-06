@@ -1,0 +1,29 @@
+@startuml
+abstract class fi.karelia.edu.maze.CSVMethods {
++ {static} ArrayList<Player> CSVImport(String)
++ {static} void CSVExport(ArrayList<Player>,String)
+}
+note top of fi.karelia.edu.maze.CSVMethods
+
+ * Abstract class for methods to import/export from/to CSV file of Players.
+ 
+end note
+
+note left of fi.karelia.edu.maze.CSVMethods::CSVImport(String)
+
+     * Import from CSV-file to ArrayList of Player class.
+     *
+     * @param filePath the file path
+     * @return the ArrayList of Player
+     
+end note
+note right of fi.karelia.edu.maze.CSVMethods::CSVExport(ArrayList<Player>,String)
+
+     * Export from ArrayList of Player class to CSV-file.
+     *
+     * @param playerList the ArrayList of Player
+     * @param filePath   the file path
+     
+end note
+
+@enduml

@@ -1,0 +1,53 @@
+@startuml
+class fi.karelia.edu.maze.Score {
++ String getName()
++ Double getScore()
++ int compareTo(Score)
+}
+
+abstract class external.GameLoopTimer {
++ boolean isPaused()
++ boolean isActive()
++ DoubleProperty animationDurationProperty()
++ void pause()
++ void play()
++ void start()
++ void stop()
++ void handle(long)
++ {abstract}void tick(float)
+}
+
+class fi.karelia.edu.maze.LevelMap {
++ int getSize()
++ int[][] getMazeMatrix()
+}
+
+class fi.karelia.edu.maze.MazeGame {
++ {static} void main(String[])
++ void start(Stage)
+}
+
+class fi.karelia.edu.maze.MazeGame$Moving {
++ void tick(float)
+}
+
+abstract class fi.karelia.edu.maze.CSVMethods {
++ {static} ArrayList<Player> CSVImport(String)
++ {static} void CSVExport(ArrayList<Player>,String)
+}
+
+class fi.karelia.edu.maze.Player {
++ String getName()
++ void setName(String)
++ double[] getBestScores()
++ void addScore(double)
+}
+
+
+
+fi.karelia.edu.maze.Comparable <|.. fi.karelia.edu.maze.Score
+javafx.animation.AnimationTimer <|-- external.GameLoopTimer
+javafx.application.Application <|-- fi.karelia.edu.maze.MazeGame
+fi.karelia.edu.maze.MazeGame +.. fi.karelia.edu.maze.MazeGame$Moving
+fi.karelia.edu.maze.GameLoopTimer <|-- fi.karelia.edu.maze.MazeGame$Moving
+@enduml

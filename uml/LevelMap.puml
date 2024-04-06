@@ -1,0 +1,80 @@
+@startuml
+class fi.karelia.edu.maze.LevelMap {
+- int size
+- int[][] mazeMatrix
+- ArrayList<Character> directions
++ <<Create>> LevelMap(int)
+- void carvePassageInMaze(int,int)
++ int getSize()
++ int[][] getMazeMatrix()
+}
+note top of fi.karelia.edu.maze.LevelMap
+
+ * The type LevelMap.
+ 
+end note
+
+note left of fi.karelia.edu.maze.LevelMap::size
+
+     * The size of the maze.
+     
+end note
+note right of fi.karelia.edu.maze.LevelMap::mazeMatrix
+
+     * The maze matrix.
+     
+end note
+note left of fi.karelia.edu.maze.LevelMap::directions
+
+     * Directions for carving the passage.
+     
+end note
+
+note left of fi.karelia.edu.maze.LevelMap::LevelMap(int)
+
+     * Instantiates a new LevelMap.
+     * Creates a specific sized maze matrix.
+     * Each matrix cell corresponds either to a wall or a maze position/cell<p>
+     * 0 - unvisited cell (at first all of them are)<p>
+     * 1 - visited cell<p>
+     * 2 - wall<p>
+     * 4 - no wall<p>
+     * 5 - exit<p>
+     * In this constructor maze matrix is populated with walls and unvisited cells everywhere.
+     *
+     * @param size the size
+     
+end note
+note right of fi.karelia.edu.maze.LevelMap::carvePassageInMaze(int,int)
+
+     * Carve passage in maze using recursive backtracking method with 2 int attributes as
+     * starting position for carving. Both should be odd - method doesn't check if they are.
+     * Algorithm goes like this:<p>
+     * 1. Choose starting position(we do this beforehand)<p>
+     * 2. Randomly determine where to go(North/Up, South/Down, West/Left, East/Right)
+     * It shouldn't be another wall or visited cell. So we always carve new cells.<p>
+     * 3. If we have nowhere to go, then we go back one cell.<p>
+     * 4. Once we have nowhere to go, and we're back to the starting position, the maze is done.<p>
+     * Recursion part starts at 2nd step by calling 1st step again, but with new position of a cell we carved.<p>
+     * For algorithm's description @see <a href="https://weblog.jamisbuck.org/2010/12/27/maze-generation-recursive-backtracking"></a>
+     *
+     * @param cx current X coordinate in a maze
+     * @param cy current Y coordinate in a maze
+     
+end note
+note left of fi.karelia.edu.maze.LevelMap::getSize()
+
+     * Gets size.
+     *
+     * @return the size of maze
+     
+end note
+note right of fi.karelia.edu.maze.LevelMap::getMazeMatrix()
+
+     * Get the maze array.
+     *
+     * @return the int[][]
+     
+end note
+
+@enduml

@@ -1,0 +1,65 @@
+@startuml
+class fi.karelia.edu.maze.Score {
+- String name
+- Double score
+~ <<Create>> Score(String,Double)
++ String getName()
++ Double getScore()
++ int compareTo(Score)
+}
+note top of fi.karelia.edu.maze.Score
+
+ * The type Score.
+ * Used for sorting "Player name - Score" pair.
+ * Implements Comparable for sorting.
+ * @see java.lang.Comparable
+ 
+end note
+
+note left of fi.karelia.edu.maze.Score::name
+
+     * The name.
+     
+end note
+note right of fi.karelia.edu.maze.Score::score
+
+     * The score.
+     
+end note
+
+note left of fi.karelia.edu.maze.Score::Score(String,Double)
+
+     * Instantiates a new Score.
+     *
+     * @param name  the name
+     * @param score the score
+     
+end note
+note right of fi.karelia.edu.maze.Score::getName()
+
+     * Gets name.
+     *
+     * @return the name
+     
+end note
+note left of fi.karelia.edu.maze.Score::getScore()
+
+     * Gets score.
+     *
+     * @return the score
+     
+end note
+note right of fi.karelia.edu.maze.Score::compareTo(Score)
+
+     * Compare to int. Implemented so class could sort entries based on score,
+     * which would sort names as well.
+     *
+     * @param score the score
+     * @return the int
+     
+end note
+
+
+
+fi.karelia.edu.maze.Comparable <|.. fi.karelia.edu.maze.Score
+@enduml

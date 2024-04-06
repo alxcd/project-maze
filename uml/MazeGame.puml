@@ -1,0 +1,254 @@
+@startuml
+class fi.karelia.edu.maze.MazeGame {
+- int size
+- int squareSide
+- Circle circlePlayer
+- Label lbPlayerXY
+- Label lbPlayerGrid
+- Label lbGameTimer
+- LevelMap maze
+- HashMap<String,Integer> keyPressedDirection
+- Label lbScore
+- Stage pStage
+- DecimalFormat decimalFormat
+- Player player
+- double currentScore
+- ArrayList<Player> playerList
+- String filePath
+~ ImageView imageExit
+~ ImageView imageKeys
+- int centerCell
++ {static} void main(String[])
++ void start(Stage)
+~ void nextLevel(Stage,double)
+~ void newGame(Stage)
+~ void saveScoreStage()
+- void saveScoresToFile(TextField)
+~ void showScoresStage()
+~ void startGame(Stage)
+}
+note top of fi.karelia.edu.maze.MazeGame
+
+ * The Maze Game.
+ 
+end note
+
+note left of fi.karelia.edu.maze.MazeGame::size
+
+     * The size of maze.
+     
+end note
+note right of fi.karelia.edu.maze.MazeGame::squareSide
+
+     * The size of square side for the cell in the maze.
+     
+end note
+note left of fi.karelia.edu.maze.MazeGame::circlePlayer
+
+     * The Circle for drawing player.
+     
+end note
+note right of fi.karelia.edu.maze.MazeGame::lbPlayerXY
+
+     * The label for printing player's coordinates.
+     
+end note
+note left of fi.karelia.edu.maze.MazeGame::lbPlayerGrid
+
+     * The label for printing player's position on a grid.
+     
+end note
+note right of fi.karelia.edu.maze.MazeGame::lbGameTimer
+
+     * The label for printing game's timer.
+     
+end note
+note left of fi.karelia.edu.maze.MazeGame::maze
+
+     * The Maze.
+     
+end note
+note right of fi.karelia.edu.maze.MazeGame::keyPressedDirection
+
+     * The Key pressed direction. For keeping track of pressed keyboard keys.
+     
+end note
+note left of fi.karelia.edu.maze.MazeGame::lbScore
+
+     * The score label.
+     
+end note
+note right of fi.karelia.edu.maze.MazeGame::pStage
+
+     * The copy of primaryStage.
+     
+end note
+note left of fi.karelia.edu.maze.MazeGame::decimalFormat
+
+     * The Decimal format for displaying double numbers.
+     
+end note
+note right of fi.karelia.edu.maze.MazeGame::player
+
+     * The Player.
+     
+end note
+note left of fi.karelia.edu.maze.MazeGame::currentScore
+
+     * The Current score.
+     
+end note
+note right of fi.karelia.edu.maze.MazeGame::playerList
+
+     * The ArrayList of Player.
+     
+end note
+note left of fi.karelia.edu.maze.MazeGame::filePath
+
+     * The file path to CSV-file of players and their scores.
+     
+end note
+note right of fi.karelia.edu.maze.MazeGame::imageExit
+
+     * The Image for exit.
+     
+end note
+note left of fi.karelia.edu.maze.MazeGame::imageKeys
+
+     * The Image for keyboard keys.
+     
+end note
+note right of fi.karelia.edu.maze.MazeGame::centerCell
+
+     * The Center cell for placing player.
+     
+end note
+
+note left of fi.karelia.edu.maze.MazeGame::main(String[])
+
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     
+end note
+note right of fi.karelia.edu.maze.MazeGame::start(Stage)
+
+     * Start of the program.
+     * Copies primaryStage to pStage and calls startGame method
+     *
+     * @param primaryStage the primary stage
+     * @see #startGame(Stage) #startGame(Stage)#startGame(Stage)
+     
+end note
+note left of fi.karelia.edu.maze.MazeGame::nextLevel(Stage,double)
+
+     * Called when player advances to the next level.
+     *
+     * @param stage          the stage
+     * @param elapsedSeconds the elapsed seconds
+     
+end note
+note right of fi.karelia.edu.maze.MazeGame::newGame(Stage)
+
+     * Called by pressing "New game" button.
+     *
+     * @param stage the stage
+     
+end note
+note left of fi.karelia.edu.maze.MazeGame::saveScoreStage()
+
+     * Called by pressing "Save score" button.
+     * Asks player to enter their name.
+     
+end note
+note right of fi.karelia.edu.maze.MazeGame::saveScoresToFile(TextField)
+
+     * Saves scores in CSV file.
+     * Checks if player exists, if not - adds new player to file.
+     *
+     * @param textArea the text area
+     
+end note
+note left of fi.karelia.edu.maze.MazeGame::showScoresStage()
+
+     * Show best scores stage.
+     * Creates new ArrayList of Score to determine best scores.
+     
+end note
+note right of fi.karelia.edu.maze.MazeGame::startGame(Stage)
+
+     * Start game.
+     *
+     * @param stage the stage
+     
+end note
+
+class fi.karelia.edu.maze.MazeGame$Moving {
+- double elapsedSeconds
+~ <<Create>> Moving()
++ void tick(float)
+- boolean isPlayerMovableY()
+- boolean isPlayerMovableX()
+- boolean isExit()
+- void displayInfo()
+}
+note top of fi.karelia.edu.maze.MazeGame$Moving
+
+     * The Moving type which extends external class GameLoopTimer.
+     *
+     * @see external.GameLoopTimer
+     
+end note
+
+note left of fi.karelia.edu.maze.MazeGame$Moving::elapsedSeconds
+
+         * The elapsed seconds are used to determine the score player gets from level.
+         
+end note
+
+note left of fi.karelia.edu.maze.MazeGame$Moving::Moving()
+
+         * Instantiates a new Moving.
+         
+end note
+note right of fi.karelia.edu.maze.MazeGame$Moving::tick(float)
+
+         * Tick method overriding method from GameLoopTimer.
+         * Is used to control the speed of animation.
+         *
+         * @param secondsSinceLastFrame the seconds since last frame
+         
+end note
+note left of fi.karelia.edu.maze.MazeGame$Moving::isPlayerMovableY()
+
+         * Is player movable in Y-axis boolean.
+         *
+         * @return the boolean
+         
+end note
+note right of fi.karelia.edu.maze.MazeGame$Moving::isPlayerMovableX()
+
+         * Is player movable in X-axis boolean.
+         *
+         * @return the boolean
+         
+end note
+note left of fi.karelia.edu.maze.MazeGame$Moving::isExit()
+
+         * Has player reached exit cell boolean.
+         *
+         * @return the boolean
+         
+end note
+note right of fi.karelia.edu.maze.MazeGame$Moving::displayInfo()
+
+         * Display info at the bottom.
+         
+end note
+
+
+
+javafx.application.Application <|-- fi.karelia.edu.maze.MazeGame
+fi.karelia.edu.maze.MazeGame +.. fi.karelia.edu.maze.MazeGame$Moving
+fi.karelia.edu.maze.GameLoopTimer <|-- fi.karelia.edu.maze.MazeGame$Moving
+@enduml

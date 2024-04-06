@@ -1,0 +1,66 @@
+@startuml
+class fi.karelia.edu.maze.Player {
+- String name
+- double[] bestScores
+~ <<Create>> Player(String,double[])
++ String getName()
++ void setName(String)
++ double[] getBestScores()
++ void addScore(double)
+}
+note top of fi.karelia.edu.maze.Player
+
+ * The type Player.
+ 
+end note
+
+note left of fi.karelia.edu.maze.Player::name
+
+     * The name.
+     
+end note
+note right of fi.karelia.edu.maze.Player::bestScores
+
+     * Best scores.
+     
+end note
+
+note left of fi.karelia.edu.maze.Player::Player(String,double[])
+
+     * Instantiates a new Player.
+     *
+     * @param name       the name
+     * @param bestScores best scores
+     
+end note
+note right of fi.karelia.edu.maze.Player::getName()
+
+     * Gets name.
+     *
+     * @return the name
+     
+end note
+note left of fi.karelia.edu.maze.Player::setName(String)
+
+     * Sets name.
+     *
+     * @param name the name
+     
+end note
+note right of fi.karelia.edu.maze.Player::getBestScores()
+
+     * Get best scores double[].
+     *
+     * @return the double[]
+     
+end note
+note left of fi.karelia.edu.maze.Player::addScore(double)
+
+     * Add score to bestScores.
+     * If the score is better than the worst score, then it is added.
+     * bestScores array is sorted.
+     * @param score the score
+     
+end note
+
+@enduml
